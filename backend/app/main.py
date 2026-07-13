@@ -1,12 +1,22 @@
 from fastapi import FastAPI
 
-app = FastAPI(title="Invoice AI API")
+from app.api.router import router
+from app.core.config import settings
 
+app = FastAPI(
+    title=settings.APP_NAME
+)
+
+app.include_router(router)
 
 @app.get("/")
 def root():
-    return {"message": "Backend Running"}
+    return {
+        "message": "Backend Running"
+    }
 
 @app.get("/health")
 def health():
-    return {"status": "healthy"}
+    return {
+        "status": "healthy"
+    }
