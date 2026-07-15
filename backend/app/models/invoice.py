@@ -22,3 +22,9 @@ class Invoice(Base):
         DateTime,
         server_default=func.now()
     )
+
+    file_path = Column(String, nullable=False)
+
+    file_size = Column(Integer)
+
+    mime_type = Column(String)
