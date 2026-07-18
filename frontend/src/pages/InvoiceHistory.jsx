@@ -1,39 +1,41 @@
 import useInvoices from "../hooks/useInvoices";
 
+import Loading from "../components/common/Loading";
+import EmptyState from "../components/common/EmptyState";
+
+import InvoiceTable from "../components/invoice/InvoiceTable";
+
 export default function InvoiceHistory() {
-    const { data, isLoading, } = useInvoices();
+    const { data, isLoading, isError, } = useInvoices();
 
     if(isLoading){
-        return <p>Loading...</p>;
+        return <Loading />;
+    }
+
+    if(isError){
+        return (
+            <EmptyState 
+                title="Something went wrong" description="Unable to load invoices" 
+            />
+        );
+    }
+
+    if(!data || data.length === 0){
+        return (
+            <EmptyState
+                title="No invoices found"
+                description="Upload your first invoice to get started"
+            />
+        );
     }
 
     return (
-        <div>
-            <h1 className="text-3xl mb-6">
+        <div className="space-y-6">
+            <h1 className="text-3xl font-bold">
                 Invoice History
             </h1>
-            <table className="w-full">
-                <thead>
-                    <tr>
-                        <th>Filename</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <body>
-                    {data?.map(
-                        (invoice) => (
-                            <tr key={invoice.id}>
-                                <td>
-                                    {invoice.filename}
-                                </td>
-                                <td>
-                                    invoice.processing_status
-                                </td>
-                            </tr>
-                        )
-                    )}
-                </body>
-            </table>
+
+            <InvoiceTable invoices={data} />
         </div>
     );
 }

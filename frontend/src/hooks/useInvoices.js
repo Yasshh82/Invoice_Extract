@@ -9,5 +9,6 @@ export default function useInvoice() {
             const response = await getInvoices();
             return response.data;
         },
+        staleTime: 60 * 1000,
     });
 }
