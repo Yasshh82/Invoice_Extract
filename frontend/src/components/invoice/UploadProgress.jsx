@@ -2,21 +2,18 @@ import { Progress } from "../ui/progress";
 
 export default function UploadProgress({
     progress,
-    filename,
 }){
+    if(progress === 0) return null;
+
     return(
         <div className="space-y-2">
-            <div className="flex justify-between">
-                <span>
-                    {filename}
-                </span>
-                <span>
-                    {progress}%
-                </span>
-            </div>
 
             <Progress value={progress} />
-            
+
+            <p className="text-sm">
+                {progress}%
+            </p>
+
         </div>
     );
 }
