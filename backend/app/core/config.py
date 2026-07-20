@@ -6,7 +6,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 class Settings(BaseSettings):
     APP_NAME: str
+
     DEBUG: bool
+
+    BACKEND_PUBLIC_URL: str
 
     DATABASE_URL: str
 
