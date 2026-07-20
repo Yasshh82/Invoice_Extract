@@ -25,25 +25,14 @@ router = APIRouter(
     tags=["Upload"],
 )
 
-@router.post(
-    "/",
-    response_model=UploadResponse,
-)
+@router.post("/", response_model=UploadResponse,)
 async def upload_file(
     file: UploadFile = File(...),
-    service: UploadService = Depends(
-        get_upload_service
-    ),
+    service: UploadService = Depends(get_upload_service),
 ):
-    try:
-        return service.upload(file)
-    
-    except ValueError as e:
-        raise HTTPException(
-            status_code=400,
-            details=str(e),
-        )
-    
+    return service.upload(file)
+
+        
 @router.post("/bulk", response_model=list[UploadResponse])
 async def upload_bulk(
     files: List[UploadFile] = File(...),

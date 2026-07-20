@@ -5,6 +5,7 @@ from app.repositories.invoice_repositiory import InvoiceRepository
 from app.services.file_storage import save_file
 from app.constants.invoice_status import InvoiceStatus
 from app.core.logging import logger
+from app.mappers.invoice_mapper import InvoiceMapper
 
 class UploadService:
     def __init__(self, repository: InvoiceRepository,):
@@ -24,9 +25,9 @@ class UploadService:
                 processing_status=InvoiceStatus.UPLOADED,
             )
 
-            created_invoice = self.repository.create(invoice)
-            logger.info("Invoice %s stored successfully", created_invoice.id)
-            return created_invoice
+            invoice = self.repository.create(invoice)
+            logger.info("Invoice %s stored successfully", invoice.id)
+            return InvoiceMapper.to_response(invoice)
         except Exception:
             logger.exception("Failed to upload file: %s", upload_file.filename)
             raise

@@ -6,15 +6,12 @@ from app.repositories.invoice_repositiory import InvoiceRepository
 from app.services.invoice_service import InvoiceService
 from app.services.upload_service import UploadService
 
-def get_invoice_service(
-        db: Session = Depends(get_db)
-):
+def get_invoice_service(db: Session = Depends(get_db)):
+    
     repository = InvoiceRepository(db)
     return InvoiceService(repository)
 
-def get_upload_service(
-        db: Session = Depends(get_db)
-):
+def get_upload_service(db: Session = Depends(get_db)):
+    
     repository = InvoiceRepository(db)
-
     return UploadService(repository)

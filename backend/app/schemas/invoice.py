@@ -13,7 +13,7 @@ class InvoiceBase(BaseModel):
 class InvoiceCreate(InvoiceBase):
     pass
 
-class InvoiceResponse(InvoiceBase):
+class InvoiceResponse(BaseModel):
 
     id: int
     filename: str
