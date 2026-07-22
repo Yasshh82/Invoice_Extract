@@ -2,6 +2,7 @@ from app.models.invoice import Invoice
 from app.repositories.invoice_repositiory import InvoiceRepository
 from app.exceptions.invoice_exceptions import InvoiceNotFoundException
 from app.mappers.invoice_mapper import InvoiceMapper
+from app.schemas.invoice import InvoiceStatusResponse
 
 class InvoiceService:
 
@@ -21,6 +22,12 @@ class InvoiceService:
     def get_all(self):
         invoices = self.repository.get_all()
         return InvoiceMapper.to_response_list(invoices)
+
+    def get_status(self, invoice_id):
+        invoice = self.repository.get(invoice_id)
+        if invoice is None:
+            raise InvoiceNotFoundException()
+        return InvoiceStatusResponse(status=invoice.processing_status)
 
     def delete(self, invoice_id):
         invoice = self.repository.get(invoice_id)

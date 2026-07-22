@@ -6,6 +6,7 @@ from app.services.file_storage import save_file
 from app.constants.invoice_status import InvoiceStatus
 from app.core.logging import logger
 from app.mappers.invoice_mapper import InvoiceMapper
+from app.workers.tasks import process_invoice
 
 class UploadService:
     def __init__(self, repository: InvoiceRepository,):
@@ -26,6 +27,7 @@ class UploadService:
             )
 
             invoice = self.repository.create(invoice)
+            process_invoice.delay(invoice.id)
             logger.info("Invoice %s stored successfully", invoice.id)
             return InvoiceMapper.to_response(invoice)
         except Exception:

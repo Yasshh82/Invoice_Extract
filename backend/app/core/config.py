@@ -13,6 +13,8 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str
 
+    REDIS_URL: str
+
     UPLOAD_DIR: str
 
     MAX_UPLOAD_SIZE_MB: int

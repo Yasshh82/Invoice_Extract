@@ -40,3 +40,5 @@ build/
 
 # Misc
 *.tmp
+
+backend/tests
