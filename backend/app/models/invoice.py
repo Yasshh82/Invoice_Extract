@@ -28,3 +28,5 @@ class Invoice(Base):
     file_size = Column(Integer)
 
     mime_type = Column(String)
+
+    page_count = Column(Integer, default=0)
