@@ -2,6 +2,7 @@ import shutil
 from pathlib import Path
 from pdf2image import convert_from_path
 from app.core.config import settings
+from app.services.workspace import Workspace
 
 class PDFRenderer:
     def __init__(self):
@@ -9,7 +10,8 @@ class PDFRenderer:
         self.temp_root.mkdir(exist_ok=True, parents=True,)
 
     def render(self, pdf_path:str, invoice_id: int,) -> list[Path]:
-        output_dir = (self.temp_root/str(invoice_id))
+        workspace = Workspace(invoice_id)
+        output_dir = workspace.rendered
 
         output_dir.mkdir(exist_ok=True, parents=True,)
 

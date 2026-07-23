@@ -1,6 +1,8 @@
 from pathlib import Path
 from app.core.logging import logger
 from app.services.pdf_renderer import PDFRenderer
+from backend.app.services.image_preprocessor import ImagePreprocessor
+from app.services.workspace import Workspace
 
 class DocumentProcessingService:
     def __init__(self):
@@ -18,4 +20,20 @@ class DocumentProcessingService:
         # OpenCV preprocessing
         #
 
-        return pages
+        workspace = Workspace(invoice.id)
+        preprocessor = ImagePreprocessor()
+
+        processed_pages = []
+
+        for page in pages:
+            destination = workspace.preprocessed / page.name
+            processed_pages.append(
+                preprocessor.preprocess(
+                    page,
+                    destination,
+                )
+            )
+
+        logger.info("{} pages preprocessed.", len(processed_pages))
+
+        return processed_pages
