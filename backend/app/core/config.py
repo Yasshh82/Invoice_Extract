@@ -19,6 +19,12 @@ class Settings(BaseSettings):
 
     MAX_UPLOAD_SIZE_MB: int
 
+    TEMP_DIR: str = "temp"
+
+    PDF_RENDER_DPI: int = 300
+
+    PDF_IMAGE_FORMAT: str = "png"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore",

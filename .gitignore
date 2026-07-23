@@ -42,3 +42,5 @@ build/
 *.tmp
 
 backend/tests
+
+backend/app/temp

@@ -2,6 +2,7 @@ from app.constants.invoice_status import InvoiceStatus
 from app.core.logging import logger
 from app.database.session import SessionLocal
 from app.repositories.invoice_repositiory import InvoiceRepository
+from app.services.document_processing import DocumentProcessingService
 
 from .celery_app import celery_app
 
@@ -22,9 +23,8 @@ def process_invoice(invoice_id: int):
 
         db.commit()
 
-        #
-        # OCR pipeline will be inserted here
-        #
+        processor = DocumentProcessingService()
+        processor.process(invoice)
 
         invoice.processing_status = (InvoiceStatus.COMPLETED)
 
