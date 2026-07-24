@@ -1,7 +1,10 @@
 from pathlib import Path
 from app.core.logging import logger
 from app.services.pdf_renderer import PDFRenderer
-from backend.app.services.image_preprocessor import ImagePreprocessor
+from app.services.image_preprocessor import ImagePreprocessor
+from app.services.ocr.engine import OCREngine
+from app.services.ocr.paddle_backend import PaddleOCRBackend
+from app.services.ocr_storage import OCRStorage
 from app.services.workspace import Workspace
 
 class DocumentProcessingService:
@@ -35,5 +38,15 @@ class DocumentProcessingService:
             )
 
         logger.info("{} pages preprocessed.", len(processed_pages))
+
+        backend = PaddleOCRBackend()
+
+        engine = OCREngine(backend)
+
+        ocr_document = engine.process(processed_pages)
+
+        OCRStorage.save(workspace, ocr_document)
+
+        logger.info("OCR finished.")
 
         return processed_pages
