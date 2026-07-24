@@ -13,7 +13,7 @@ class OCRStorage:
             words = []
 
             for word in page.words:
-                words.append({"text": word.text, "confidence": word.confidence, "bbox": word.bbox})
+                words.append({"text": word.text, "confidence": word.confidence, "bbox": word.bbox, "normalized_bbox": word.normalized_bbox})
 
             output.append({"page": page.page_number, "words": words})
 
