@@ -7,6 +7,7 @@ class Workspace:
         self.rendered = self.root/"rendered"
         self.preprocessed = self.root/"preprocessed"
         self.ocr = self.root/"ocr"
+        self.visualization = self.root/"visualization"
         self.layoutlm = self.root/"layoutlm"
         self.output = self.root/"output"
 

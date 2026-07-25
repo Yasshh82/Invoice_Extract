@@ -5,6 +5,7 @@ import EmptyState from "../components/common/EmptyState";
 
 import InvoiceMetadata from "../components/invoice/InvoiceMetadata";
 import InvoicePreview from "../components/invoice/InvoicePreview";
+import OCRPreview from "../components/invoice/OCRPreview";
 import InvoiceStatus from "../components/invoice/InvoiceStatus";
 import ExtractedFields from "../components/invoice/ExtractedFields";
 
@@ -46,8 +47,11 @@ export default function InvoiceDetails() {
                     <ExtractedFields />
                 </div>
 
-                <div className="lg:col-span-2">
-                    <InvoicePreview invoice={data} />
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="grid gap-6 xl:grid-cols-2">
+                        <InvoicePreview invoice={data} />
+                        <OCRPreview invoice={data} />
+                    </div>
                 </div>
             </div>
         </div>

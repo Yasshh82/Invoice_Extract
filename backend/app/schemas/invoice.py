@@ -21,6 +21,7 @@ class InvoiceResponse(BaseModel):
     file_size: int
     mime_type: str
     processing_status: str
+    visualization_urls: list[str]
     uploaded_at: datetime
     model_config = ConfigDict(from_attributes=True)
 

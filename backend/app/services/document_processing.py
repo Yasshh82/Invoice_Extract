@@ -6,6 +6,7 @@ from app.services.ocr.engine import OCREngine
 from app.services.ocr.paddle_backend import PaddleOCRBackend
 from app.services.ocr_storage import OCRStorage
 from app.services.workspace import Workspace
+from app.services.visualization.ocr_visualizer import OCRVisualizer
 
 class DocumentProcessingService:
     def __init__(self):
@@ -31,10 +32,7 @@ class DocumentProcessingService:
         for page in pages:
             destination = workspace.preprocessed / page.name
             processed_pages.append(
-                preprocessor.preprocess(
-                    page,
-                    destination,
-                )
+                preprocessor.preprocess(page, destination)
             )
 
         logger.info("{} pages preprocessed.", len(processed_pages))
@@ -47,6 +45,9 @@ class DocumentProcessingService:
 
         OCRStorage.save(workspace, ocr_document)
 
+        visualizer = OCRVisualizer()
+        visualizer.visualize(workspace, ocr_document)
+
         logger.info("OCR finished.")
 
-        return processed_pages
+        return ocr_document
