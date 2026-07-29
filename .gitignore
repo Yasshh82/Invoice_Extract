@@ -44,3 +44,5 @@ build/
 backend/tests
 
 backend/app/temp
+
+backend/ml/dataset/sroie
