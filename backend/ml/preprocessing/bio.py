@@ -1,0 +1,21 @@
+LABELS = [
+
+    "O",
+
+    "B-COMPANY",
+
+    "I-COMPANY",
+
+    "B-DATE",
+
+    "I-DATE",
+
+    "B-ADDRESS",
+
+    "I-ADDRESS",
+
+    "B-TOTAL",
+
+    "I-TOTAL",
+
+]
