@@ -23,7 +23,7 @@ class FeatureBuilder:
 
                 boxes.append(word.normalized_bbox)
 
-        labels = self.aligner.align(words, document.entities)
+        alignment = self.aligner.align(words, document.entities)
 
-        return FeatureDocument(image=image, words=words, boxes=boxes, labels=labels)
+        return FeatureDocument(image=image, words=words, boxes=boxes, labels=alignment.labels)
 
