@@ -1,0 +1,12 @@
+{
+    "label_to_id": {
+        "O": 0,
+        "B-COMPANY": 1,
+        "I-COMPANY": 2
+    },
+    "id_to_label": {
+        "0": "O",
+        "1": "B-COMPANY",
+        "2": "I-COMPANY"
+    }
+}

@@ -7,13 +7,17 @@ import sys
 if __package__:
     from .dataset import InvoiceDataLoader, InvoiceDataset
     from .dataset.builder import DatasetBuilder
+    from .preprocessing.artifact import save_training_artifact
     from .preprocessing.feature_builder import FeatureBuilder
+    from .preprocessing.label_encoder import LabelEncoder
     from .preprocessing.processor import LayoutLMProcessor
 else:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     from ml.dataset import InvoiceDataLoader, InvoiceDataset
     from ml.dataset.builder import DatasetBuilder
+    from ml.preprocessing.artifact import save_training_artifact
     from ml.preprocessing.feature_builder import FeatureBuilder
+    from ml.preprocessing.label_encoder import LabelEncoder
     from ml.preprocessing.processor import LayoutLMProcessor
 
 
@@ -49,7 +53,20 @@ def prepare_dataset(dataset_root: Path, batch_size: int = 2, processor=None, fea
     builder = DatasetBuilder()
     documents = builder.build(dataset_root)
 
-    processor = processor or LayoutLMProcessor()
+    artifact_dir = Path(__file__).resolve().parent / "artifacts" / "v1"
+    encoder = LabelEncoder().fit(documents)
+    artifact_dir = save_training_artifact(
+        encoder,
+        artifact_dir=artifact_dir,
+        model_name="microsoft/layoutlmv3-base",
+        max_length=512,
+        image_size=224,
+        dataset_name="SROIE",
+        num_documents=len(documents),
+        dataset_version="SROIE-v1",
+    )
+
+    processor = processor or LayoutLMProcessor(label_map_path=artifact_dir / "label_map.json", label_encoder=encoder)
     feature_builder = feature_builder or FeatureBuilder()
 
     encodings = []

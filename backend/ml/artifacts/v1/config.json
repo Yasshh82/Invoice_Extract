@@ -1,0 +1,7 @@
+{
+    "model_name": "microsoft/layoutlmv3-base",
+    "max_length": 512,
+    "image_size": 224,
+    "dataset": "SROIE",
+    "label_map": "label_map.json"
+}
