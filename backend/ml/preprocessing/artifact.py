@@ -18,6 +18,16 @@ def get_default_artifact_dir() -> Path:
     return Path(__file__).resolve().parents[1] / "artifacts" / DEFAULT_ARTIFACT_VERSION
 
 
+def get_model_dir(artifact_dir: str | Path | None = None) -> Path:
+    artifact_dir = Path(artifact_dir or get_default_artifact_dir())
+    return artifact_dir / "model"
+
+
+def get_reports_dir(artifact_dir: str | Path | None = None) -> Path:
+    artifact_dir = Path(artifact_dir or get_default_artifact_dir())
+    return artifact_dir / "reports"
+
+
 def save_training_artifact(
     encoder: LabelEncoder,
     artifact_dir: str | Path | None = None,
@@ -33,7 +43,10 @@ def save_training_artifact(
     artifact_dir = Path(artifact_dir or get_default_artifact_dir())
     artifact_dir.mkdir(parents=True, exist_ok=True)
 
-    label_map_path = artifact_dir / "label_map.json"
+    model_dir = get_model_dir(artifact_dir)
+    model_dir.mkdir(parents=True, exist_ok=True)
+
+    label_map_path = model_dir / "label_map.json"
     encoder.save(label_map_path)
 
     config = {
@@ -41,7 +54,7 @@ def save_training_artifact(
         "max_length": max_length,
         "image_size": image_size,
         "dataset": dataset_name,
-        "label_map": label_map_path.name,
+        "label_map": "model/label_map.json",
     }
 
     metadata = {
@@ -65,10 +78,12 @@ def save_training_artifact(
 
 def load_training_artifact(artifact_dir: str | Path) -> dict[str, Any]:
     artifact_dir = Path(artifact_dir)
+    model_dir = get_model_dir(artifact_dir)
+    reports_dir = get_reports_dir(artifact_dir)
 
     config_path = artifact_dir / "config.json"
     metadata_path = artifact_dir / "metadata.json"
-    label_map_path = artifact_dir / "label_map.json"
+    label_map_path = model_dir / "label_map.json"
 
     if not config_path.exists() or not metadata_path.exists() or not label_map_path.exists():
         raise FileNotFoundError(f"Training artifact is incomplete: {artifact_dir}")
@@ -81,4 +96,11 @@ def load_training_artifact(artifact_dir: str | Path) -> dict[str, Any]:
 
     encoder = LabelEncoder.load(label_map_path)
 
-    return {"artifact_dir": artifact_dir, "config": config, "metadata": metadata, "encoder": encoder}
+    return {
+        "artifact_dir": artifact_dir,
+        "model_dir": model_dir,
+        "reports_dir": reports_dir,
+        "config": config,
+        "metadata": metadata,
+        "encoder": encoder,
+    }

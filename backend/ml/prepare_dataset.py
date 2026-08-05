@@ -49,22 +49,35 @@ class SimpleOCRDocument:
             self.pages.append(SimpleNamespace(words=words))
 
 
-def prepare_dataset(dataset_root: Path, batch_size: int = 2, processor=None, feature_builder=None):
+def prepare_dataset(
+    dataset_root: Path,
+    batch_size: int = 2,
+    processor=None,
+    feature_builder=None,
+    save_artifact: bool = True,
+    label_encoder=None,
+):
     builder = DatasetBuilder()
     documents = builder.build(dataset_root)
 
     artifact_dir = Path(__file__).resolve().parent / "artifacts" / "v1"
-    encoder = LabelEncoder().fit(documents)
-    artifact_dir = save_training_artifact(
-        encoder,
-        artifact_dir=artifact_dir,
-        model_name="microsoft/layoutlmv3-base",
-        max_length=512,
-        image_size=224,
-        dataset_name="SROIE",
-        num_documents=len(documents),
-        dataset_version="SROIE-v1",
-    )
+
+    if save_artifact:
+        encoder = LabelEncoder().fit(documents)
+        artifact_dir = save_training_artifact(
+            encoder,
+            artifact_dir=artifact_dir,
+            model_name="microsoft/layoutlmv3-base",
+            max_length=512,
+            image_size=224,
+            dataset_name="SROIE",
+            num_documents=len(documents),
+            dataset_version="SROIE-v1",
+        )
+    else:
+        if label_encoder is None:
+            raise ValueError("label_encoder must be provided when save_artifact is False")
+        encoder = label_encoder
 
     processor = processor or LayoutLMProcessor(label_map_path=artifact_dir / "label_map.json", label_encoder=encoder)
     feature_builder = feature_builder or FeatureBuilder()
@@ -79,7 +92,7 @@ def prepare_dataset(dataset_root: Path, batch_size: int = 2, processor=None, fea
     dataset = InvoiceDataset(encodings)
     loader = InvoiceDataLoader(dataset, batch_size=batch_size)
 
-    return dataset, loader
+    return dataset, loader, encoder
 
 
 if __name__ == "__main__":
