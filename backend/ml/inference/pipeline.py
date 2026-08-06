@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from ml.postprocessing.pipeline import PostProcessingPipeline
+
 from .aggregator import EntityAggregator
 from .decoder import PredictionDecoder
 from .loader import ModelLoader
@@ -39,4 +41,7 @@ class InferencePipeline:
             feature_document.page_numbers,
         )
 
-        return self.aggregator.aggregate(entities)
+        structured = self.aggregator.aggregate(entities)
+        pipeline = PostProcessingPipeline()
+
+        return pipeline.process(structured)

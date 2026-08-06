@@ -1,5 +1,3 @@
-from datetime import date
-from decimal import Decimal
 from pathlib import Path
 
 from ml.inference.models import StructuredInvoice
@@ -7,7 +5,9 @@ from ml.inference.pipeline import InferencePipeline
 from ml.preprocessing.artifact import get_model_dir
 from ml.preprocessing.feature_builder import FeatureBuilder
 
+from app.constants.invoice_status import InvoiceStatus
 from app.core.logging import logger
+from app.services.invoice_persistence_service import InvoicePersistenceService
 from app.services.pdf_renderer import PDFRenderer
 from app.services.image_preprocessor import ImagePreprocessor
 from app.services.ocr.engine import OCREngine
@@ -18,10 +18,11 @@ from app.services.visualization.ocr_visualizer import OCRVisualizer
 
 
 class DocumentProcessingService:
-    def __init__(self):
+    def __init__(self, persistence_service: InvoicePersistenceService | None = None):
         self.renderer = PDFRenderer()
         self.feature_builder = FeatureBuilder()
         self.inference_pipeline = self._load_inference_pipeline()
+        self.persistence_service = persistence_service or InvoicePersistenceService()
 
     def _load_inference_pipeline(self):
         model_dir = get_model_dir()
@@ -34,29 +35,6 @@ class DocumentProcessingService:
         except Exception:
             logger.exception("Failed to initialize the inference pipeline")
             return None
-
-    def _parse_date(self, value: str | None):
-        if not value:
-            return None
-
-        try:
-            return date.fromisoformat(value)
-        except ValueError:
-            return None
-
-    def _parse_total(self, value: str | None):
-        if not value:
-            return None
-
-        try:
-            return Decimal(str(value))
-        except Exception:
-            return None
-
-    def _extract_value(self, value):
-        if isinstance(value, dict):
-            return value.get("value")
-        return value
 
     def process(self, invoice):
         pdf = Path(invoice.file_path)
@@ -109,10 +87,10 @@ class DocumentProcessingService:
         else:
             inference_result = self.inference_pipeline.run(feature)
 
-        invoice.vendor_name = self._extract_value(inference_result.vendor_name)
-        invoice.invoice_number = self._extract_value(inference_result.invoice_number)
-        invoice.invoice_date = self._parse_date(self._extract_value(inference_result.invoice_date))
-        invoice.gst_number = self._extract_value(inference_result.gst_number)
-        invoice.total_amount = self._parse_total(self._extract_value(inference_result.total_amount))
+        self.persistence_service.persist(
+            invoice,
+            inference_result,
+            status=InvoiceStatus.COMPLETED,
+        )
 
         return inference_result.to_dict()

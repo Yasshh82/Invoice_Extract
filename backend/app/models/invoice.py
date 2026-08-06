@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Date, DateTime, Integer, String, Numeric, func
+from sqlalchemy import JSON, Column, Date, DateTime, Integer, String, Numeric, func
 
 from app.database.session import Base
 
@@ -12,6 +12,10 @@ class Invoice(Base):
     invoice_date = Column(Date)
     gst_number = Column(String)
     total_amount = Column(Numeric(10, 2))
+
+    processed_at = Column(DateTime)
+
+    confidence_metadata = Column(JSON, nullable=True)
 
     processing_status = Column(
         String,

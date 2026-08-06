@@ -19,6 +19,12 @@ class InvoiceRepository:
             Invoice.id == invoice_id
         ).first()
     
+    def update(self, invoice):
+        self.db.add(invoice)
+        self.db.commit()
+        self.db.refresh(invoice)
+        return invoice
+
     def delete(self, invoice):
         self.db.delete(invoice)
         self.db.commit()
