@@ -12,6 +12,8 @@ class FeatureDocument:
 
     labels: list[str]
 
+    page_numbers: list[int] | None = None
+
 
 @dataclass(slots=True)
 class MatchResult:
