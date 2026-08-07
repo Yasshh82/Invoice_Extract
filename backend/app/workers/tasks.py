@@ -7,10 +7,13 @@ from app.services.invoice_persistence_service import InvoicePersistenceService
 
 from .celery_app import celery_app
 
-@celery_app.task(name="process_invoice",)
-def process_invoice(invoice_id: int):
+
+@celery_app.task(name="process_invoice")
+def process_invoice(invoice_id: int, batch_id: str | None = None):
     db = SessionLocal()
     persistence_service = None
+    invoice = None
+    success = False
 
     try:
         repository = InvoiceRepository(db)
@@ -19,7 +22,7 @@ def process_invoice(invoice_id: int):
         if invoice is None:
             return
 
-        logger.info("Started processing invoice {}", invoice_id,)
+        logger.info("Started processing invoice {}", invoice_id)
 
         persistence_service = InvoicePersistenceService(repository=repository)
         persistence_service.update_status(invoice, InvoiceStatus.PROCESSING)
@@ -30,8 +33,9 @@ def process_invoice(invoice_id: int):
         processor.process(invoice)
 
         persistence_service.update_status(invoice, InvoiceStatus.COMPLETED)
+        success = True
 
-        logger.info("Finished processing invoice {}", invoice_id,)
+        logger.info("Finished processing invoice {}", invoice_id)
 
     except Exception:
         logger.exception("Processing failed.")
@@ -40,4 +44,12 @@ def process_invoice(invoice_id: int):
             persistence_service.update_status(invoice, InvoiceStatus.FAILED)
 
     finally:
+        if batch_id:
+            from app.batch.manager import tracker
+
+            if success:
+                tracker.completed(batch_id)
+            else:
+                tracker.failed(batch_id)
+
         db.close()

@@ -5,7 +5,6 @@ from fastapi import (
     Depends,
     UploadFile,
     File,
-    HTTPException,
 )
 
 from app.api.dependencies import (
@@ -13,6 +12,7 @@ from app.api.dependencies import (
 )
 
 from app.schemas.upload import (
+    BulkUploadResponse,
     UploadResponse,
 )
 
@@ -25,20 +25,18 @@ router = APIRouter(
     tags=["Upload"],
 )
 
-@router.post("/", response_model=UploadResponse,)
+
+@router.post("/", response_model=UploadResponse)
 async def upload_file(
     file: UploadFile = File(...),
     service: UploadService = Depends(get_upload_service),
 ):
     return service.upload(file)
 
-        
-@router.post("/bulk", response_model=list[UploadResponse])
+
+@router.post("/bulk", response_model=BulkUploadResponse)
 async def upload_bulk(
     files: List[UploadFile] = File(...),
     service: UploadService = Depends(get_upload_service),
 ):
-    uploaded = []
-    for file in files:
-        uploaded.append(service.upload(file))
-    return uploaded
+    return service.upload_bulk(files)
