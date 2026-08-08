@@ -2,7 +2,9 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
+from app.repositories.batch_repository import BatchRepository
 from app.repositories.invoice_repositiory import InvoiceRepository
+from app.services.batch_service import BatchService
 from app.services.invoice_service import InvoiceService
 from app.services.upload_service import UploadService
 
@@ -15,3 +17,7 @@ def get_upload_service(db: Session = Depends(get_db)):
     
     repository = InvoiceRepository(db)
     return UploadService(repository)
+
+def get_batch_service(db: Session = Depends(get_db)):
+    repository = BatchRepository(db)
+    return BatchService(repository)
