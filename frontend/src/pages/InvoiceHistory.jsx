@@ -1,14 +1,17 @@
 import useInvoices from "../hooks/useInvoices";
+import useExport from "../hooks/useExport";
 
 import Loading from "../components/common/Loading";
 import EmptyState from "../components/common/EmptyState";
 
 import InvoiceTable from "../components/invoice/InvoiceTable";
+import { Button } from "@base-ui/react/button";
 
 export default function InvoiceHistory() {
-    const { data, isLoading, isError, } = useInvoices();
+    const { data, isLoading, isError } = useInvoices();
+    const { exportCSV, exportJSON } = useExport();
 
-    if(isLoading){
+    if (isLoading) {
         return <Loading />;
     }
 
@@ -34,6 +37,9 @@ export default function InvoiceHistory() {
             <h1 className="text-3xl font-bold">
                 Invoice History
             </h1>
+
+            <Button onClick={exportCSV}>Export CSV</Button>
+            <Button onClick={exportJSON}>Export JSON</Button>
 
             <InvoiceTable invoices={data} />
         </div>
