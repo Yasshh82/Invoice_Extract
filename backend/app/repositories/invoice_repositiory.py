@@ -12,7 +12,7 @@ class InvoiceRepository:
         return invoice
     
     def get_all(self):
-        return self.db.query(Invoice).all()
+        return self.db.query(Invoice).order_by(Invoice.uploaded_at.desc()).all()
     
     def get(self, invoice_id: int):
         return self.db.query(Invoice).filter(
