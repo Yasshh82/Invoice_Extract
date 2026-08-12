@@ -3,6 +3,7 @@ from app.repositories.invoice_repositiory import InvoiceRepository
 from app.exceptions.invoice_exceptions import InvoiceNotFoundException
 from app.mappers.invoice_mapper import InvoiceMapper
 from app.schemas.invoice import InvoiceStatusResponse
+from app.schemas.pagination import PaginatedInvoices
 
 class InvoiceService:
 
@@ -34,3 +35,13 @@ class InvoiceService:
         if invoice is None:
             raise InvoiceNotFoundException()
         self.repository.delete(invoice)
+
+    def query(self, invoice_query):
+        invoices, total = self.repository.query(invoice_query)
+
+        return PaginatedInvoices(
+            total=total,
+            page=invoice_query.page,
+            page_size=invoice_query.page_size,
+            items=InvoiceMapper.to_response_list(invoices)
+        )
