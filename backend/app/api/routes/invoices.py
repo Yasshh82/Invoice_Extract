@@ -20,7 +20,7 @@ def get_invoices(service: InvoiceService = Depends(get_invoice_service)):
 
 
 @router.get("/")
-def get_invoices(
+def get_invoices_paginated(
     page: int = 1,
     page_size: int = 10,
     search: str | None = None,
