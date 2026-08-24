@@ -1,24 +1,31 @@
+import json
+
 from pathlib import Path
 
 
 class SROIELabelParser:
 
-    def parse(self, label_file: Path):
+    def parse(self, label_file: Path) -> list[dict]:
 
         entities = []
 
-        with open(label_file, encoding="utf-8") as f:
+        with open(label_file, encoding="utf-8") as file:
+            data = json.load(file)
 
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
+        for label, value in data.items():
+            if value is None:
+                continue
 
-                key, value = line.split(",", 1)
+            value = str(value).strip()
 
-                entities.append({
-                    "label": key.strip().upper(),
-                    "value": value.strip()
-                })
+            if not value:
+                continue
+
+            entities.append(
+                {
+                    "label": label.upper(),
+                    "value": value
+                }
+            )
 
         return entities

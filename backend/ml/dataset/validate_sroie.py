@@ -1,56 +1,41 @@
 from pathlib import Path
 
 
-class SROIEValidator:
+def validate_dataset(root: Path):
+    image_dir = root / "images"
+    ocr_dir = root / "ocr"
+    label_dir = root / "labels"
 
-    def validate(self, root: Path):
+    images = list(image_dir.glob("*"))
 
-        image_dir = (root / "images")
+    missing_ocr = []
+    missing_labels = []
 
-        labels_dir = (root / "labels")
+    for image in images:
+        stem = image.stem
 
-        ocr_dir = (root / "ocr")
+        if not (ocr_dir / f"{stem}.txt").exists():
+            missing_ocr.append(stem)
 
-        images = list(image_dir.glob("*"))
+        if not (label_dir / f"{stem}.txt").exists():
+            missing_labels.append(stem)
 
-        missing_annotations = []
+    print(f"Images: {len(images)}")
 
-        missing_ocr = []
+    print(
+        f"Missing OCR: "
+        f"{len(missing_ocr)}"
+    )
 
-        for image in images:
+    print(
+        f"Missing labels: "
+        f"{len(missing_labels)}"
+    )
 
-            stem = image.stem
-            annotation = (labels_dir / f"{stem}.txt")
+    if missing_ocr:
+        print("First missing OCR:")
+        print(missing_ocr[:10])
 
-            ocr = (ocr_dir / f"{stem}.txt")
-
-            if not annotation.exists():
-                missing_annotations.append(stem)
-
-            if not ocr.exists():
-
-                missing_ocr.append(stem)
-
-        print(f"Images: {len(images)}")
-
-        print(
-            f"Missing annotations: "
-            f"{len(missing_annotations)}"
-        )
-
-        print(
-            f"Missing OCR: "
-            f"{len(missing_ocr)}"
-        )
-
-
-if __name__ == "__main__":
-    # Define the path to your training data relative to your working directory (ml/)
-    target_dir = Path("dataset/sroie/train")
-    
-    # Create an instance of the validator
-    validator = SROIEValidator()
-    
-    # Run the validation
-    print(f"Validating dataset at: {target_dir}")
-    validator.validate(target_dir)
+    if missing_labels:
+        print("First missing labels:")
+        print(missing_labels[:10])

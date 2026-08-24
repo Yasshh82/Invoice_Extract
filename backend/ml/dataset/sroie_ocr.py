@@ -1,26 +1,48 @@
-import json
-
 from pathlib import Path
+
 
 class SROIEOCRParser:
 
-    def parse(self, file: Path) -> dict:
-        with open(file, encoding="utf-8") as f:
-            data = json.load(f)
+    def parse(self, file: Path) -> list[dict]:
 
         words = []
 
-        for item in data:
-            if len(item) < 2:
-                continue
+        with open(file, encoding="utf-8") as f:
 
-            bbox = item[0]
+            for line in f:
 
-            text = item[1]
+                line = line.strip()
 
-            words.append({
-                "text": text,
-                "bbox": bbox
-            })
+                if not line:
+                    continue
 
-        return {"words": words}
+                parts = line.split(",")
+
+                if len(parts) < 9:
+                    continue
+
+                coordinates = parts[:8]
+
+                text = ",".join(parts[8:]).strip()
+
+                try:
+                    coordinates = [int(value) for value in coordinates]
+
+                except ValueError:
+                    continue
+
+                bbox = [
+                    [coordinates[0], coordinates[1]],
+                    [coordinates[2], coordinates[3]],
+                    [coordinates[4], coordinates[5]],
+                    [coordinates[6], coordinates[7]],
+                ]
+
+                words.append(
+                    {
+                        "text": text,
+                        "bbox": bbox
+                    }
+                )
+
+        return words
