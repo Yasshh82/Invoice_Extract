@@ -1,12 +1,24 @@
 {
     "label_to_id": {
         "O": 0,
-        "B-COMPANY": 1,
-        "I-COMPANY": 2
+        "B-ADDRESS": 1,
+        "I-ADDRESS": 2,
+        "B-COMPANY": 3,
+        "I-COMPANY": 4,
+        "B-DATE": 5,
+        "I-DATE": 6,
+        "B-TOTAL": 7,
+        "I-TOTAL": 8
     },
     "id_to_label": {
         "0": "O",
-        "1": "B-COMPANY",
-        "2": "I-COMPANY"
+        "1": "B-ADDRESS",
+        "2": "I-ADDRESS",
+        "3": "B-COMPANY",
+        "4": "I-COMPANY",
+        "5": "B-DATE",
+        "6": "I-DATE",
+        "7": "B-TOTAL",
+        "8": "I-TOTAL"
     }
 }
